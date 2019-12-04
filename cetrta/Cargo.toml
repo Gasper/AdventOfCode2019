@@ -1,0 +1,10 @@
+[package]
+name = "cetrta"
+version = "1.0.0"
+authors = ["Gasper <gasper@gmx.com>"]
+default-run = "cetrta"
+
+[[bin]]
+name = "cetrta"
+path = "cetrta.rs"
+test = true

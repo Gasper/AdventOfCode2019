@@ -1,0 +1,16 @@
+[package]
+name = "tretja"
+version = "1.0.0"
+authors = ["Gasper <gasper@gmx.com>"]
+default-run = "tretja"
+
+[[bin]]
+name = "tretja"
+path = "tretja.rs"
+test = true
+
+[dependencies]
+itertools = "0.8.2"
+
+[build-dependencies]
+itertools = "0.8.2"

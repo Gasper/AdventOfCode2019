@@ -1,0 +1,9 @@
+[package]
+name = "prva"
+version = "1.0.0"
+authors = ["Gasper <gasper@gmx.com>"]
+
+[lib]
+name = "prva"
+path = "prva.rs"
+test = true

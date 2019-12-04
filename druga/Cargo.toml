@@ -1,0 +1,9 @@
+[package]
+name = "druga"
+version = "1.0.0"
+authors = ["Gasper <gasper@gmx.com>"]
+
+[lib]
+name = "druga"
+path = "druga.rs"
+test = true
