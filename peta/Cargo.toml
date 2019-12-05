@@ -1,0 +1,10 @@
+[package]
+name = "peta"
+version = "1.0.0"
+authors = ["Gasper <gasper@gmx.com>"]
+default-run = "peta"
+
+[[bin]]
+name = "peta"
+path = "peta.rs"
+test = true
