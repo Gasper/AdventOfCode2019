@@ -8,3 +8,4 @@ default-run = "six"
 name = "six"
 path = "six.rs"
 test = true
+doctest = true
