@@ -1,0 +1,10 @@
+[package]
+name = "six"
+version = "1.0.0"
+authors = ["Gasper <gasper@gmx.com>"]
+default-run = "six"
+
+[[bin]]
+name = "six"
+path = "six.rs"
+test = true
