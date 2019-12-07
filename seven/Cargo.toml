@@ -1,0 +1,9 @@
+[package]
+name = "seven"
+version = "1.0.0"
+authors = ["Gasper <gasper@gmx.com>"]
+
+[[bin]]
+name = "seven"
+path = "seven.rs"
+test = true
