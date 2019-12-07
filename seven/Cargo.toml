@@ -7,3 +7,6 @@ authors = ["Gasper <gasper@gmx.com>"]
 name = "seven"
 path = "seven.rs"
 test = true
+
+[dependencies]
+itertools = "0.8.2"
