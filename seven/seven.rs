@@ -3,6 +3,7 @@ extern crate itertools;
 use std::convert::From;
 use std::fs::read;
 use itertools::Itertools;
+use itertools::concat;
 
 const FINISH: i64 = 99;
 const ADD: i64 = 1;
@@ -37,6 +38,12 @@ struct Instruction {
     par3mode: ParameterMode,
 }
 
+struct Amplifier {
+    memory: Vec<i64>,
+    instruction_pointer: usize,
+    input: Vec<i64>,
+}
+
 fn main() {
     let raw_input = match read("input.txt") {
         Err(_) => panic!("Can't read input.txt!"),
@@ -47,7 +54,7 @@ fn main() {
     let input_program = get_program(input_string.to_string());
 
     let mut max_signal: i64 = 0;
-    for phase_sequence in (0..5).permutations(5) {
+    for phase_sequence in (5..10).permutations(5) {
         let signal = run_amplifier_chain(&input_program, phase_sequence);
 
         if signal > max_signal {
@@ -60,18 +67,43 @@ fn main() {
 
 fn run_amplifier_chain(program: &Vec<i64>, amplifier_phases: Vec<i64>) -> i64 {
     
-    let mut signal_strength: i64 = 0;
-    for phase in amplifier_phases {
-        let input = vec![signal_strength, phase];
-        let output = run_program(&program, input);
+    let mut amplifiers: [Amplifier; 5] = [
+        Amplifier{memory: program.clone(), instruction_pointer: 0, input: vec![0, amplifier_phases[0]]},
+        Amplifier{memory: program.clone(), instruction_pointer: 0, input: vec![amplifier_phases[1]]},
+        Amplifier{memory: program.clone(), instruction_pointer: 0, input: vec![amplifier_phases[2]]},
+        Amplifier{memory: program.clone(), instruction_pointer: 0, input: vec![amplifier_phases[3]]},
+        Amplifier{memory: program.clone(), instruction_pointer: 0, input: vec![amplifier_phases[4]]},
+    ];
 
-        signal_strength = *output.last().unwrap();
+    let mut finished: bool = false;
+    let mut next_program: usize = 0;
+    while !finished {
+        let current_program = next_program;
+        next_program = (next_program + 1) % amplifiers.len();
+
+        let current_amplifier = &mut amplifiers[current_program];
+        let (pic, output) = run_program(&mut current_amplifier.memory, 
+                &current_amplifier.input, current_amplifier.instruction_pointer);
+
+        let new_input = vec![output, amplifiers[next_program].input.clone()];
+        amplifiers[next_program].input = concat(new_input);
+
+        match pic {
+            Some(pointer) => {
+                amplifiers[current_program].instruction_pointer = pointer;
+                amplifiers[current_program].input = vec![];
+            },
+            None => {
+                if current_program == 4 {
+                    finished = true;
+                }
+            }
+        }
     }
 
-    return signal_strength;
+    return amplifiers[0].input[0];
 }
 
-// From Day 5
 fn get_program(input: String) -> Vec<i64> {
     return input.split(',').map(|c| match (*c).parse::<i64>() {
         Err(_) => panic!("Couldn't parse number {}", c),
@@ -79,13 +111,12 @@ fn get_program(input: String) -> Vec<i64> {
     }).collect();
 }
 
-fn run_program(program_param: &Vec<i64>, input_param: Vec<i64>) -> Vec<i64> {
+fn run_program(program: &mut Vec<i64>, input_param: &Vec<i64>, ip: usize) -> (Option<usize>, Vec<i64>) {
 
-    let mut program = program_param.clone();
     let mut input = input_param.clone();
     let mut output = Vec::<i64>::new();
 
-    let mut pic: usize = 0;
+    let mut pic: usize = ip;
     while program[pic] != FINISH {
 
         let instruction = parse_instruction(program[pic]);
@@ -108,7 +139,10 @@ fn run_program(program_param: &Vec<i64>, input_param: Vec<i64>) -> Vec<i64> {
             INPUT => {
                 let input_number: i64 = match input.pop() {
                     Some(num) => num,
-                    None => panic!("Tried to read input number, but no input was available"),
+                    None => {
+                        // If there is no input available, switch to different program
+                        return (Some(pic), output);
+                    },
                 };
 
                 let dest: usize = program[pic + 1] as usize;
@@ -175,7 +209,7 @@ fn run_program(program_param: &Vec<i64>, input_param: Vec<i64>) -> Vec<i64> {
 
     }
 
-    return output;
+    return (None, output);
 }
 
 fn parse_instruction(code: i64) -> Instruction {
@@ -208,27 +242,20 @@ mod test {
 
     #[test]
     fn test_example1() {
-        let phases = vec![4,3,2,1,0];
-        let program = vec![3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0];
+        let phases = vec![9,8,7,6,5];
+        let program = vec![3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,
+        27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5];
 
-        assert_eq!(run_amplifier_chain(&program, phases), 43210);
+        assert_eq!(run_amplifier_chain(&program, phases), 139629729);
     }
 
     #[test]
     fn test_example2() {
-        let phases = vec![0,1,2,3,4];
-        let program = vec![3,23,3,24,1002,24,10,24,1002,23,-1,23,
-        101,5,23,23,1,24,23,23,4,23,99,0,0];
+        let phases = vec![9,7,8,5,6];
+        let program = vec![3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,
+        -5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,
+        53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10];
 
-        assert_eq!(run_amplifier_chain(&program, phases), 54321);
-    }
-
-    #[test]
-    fn test_example3() {
-        let phases = vec![1,0,4,3,2];
-        let program = vec![3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,
-        1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0];
-
-        assert_eq!(run_amplifier_chain(&program, phases), 65210);
+        assert_eq!(run_amplifier_chain(&program, phases), 18216);
     }
 }
