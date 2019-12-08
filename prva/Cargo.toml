@@ -1,9 +1,9 @@
 [package]
-name = "prva"
+name = "one"
 version = "1.0.0"
-authors = ["Gasper <gasper@gmx.com>"]
+authors = ["Gasper <gasper(a)gmx.com>"]
 
-[lib]
-name = "prva"
-path = "prva.rs"
+[[bin]]
+name = "one"
+path = "one.rs"
 test = true

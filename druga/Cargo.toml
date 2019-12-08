@@ -1,9 +1,9 @@
 [package]
-name = "druga"
+name = "two"
 version = "1.0.0"
-authors = ["Gasper <gasper@gmx.com>"]
+authors = ["Gasper <gasper(a)gmx.com>"]
 
-[lib]
-name = "druga"
-path = "druga.rs"
+[[bin]]
+name = "two"
+path = "two.rs"
 test = true

@@ -1,10 +1,9 @@
 [package]
-name = "peta"
+name = "five"
 version = "1.0.0"
-authors = ["Gasper <gasper@gmx.com>"]
-default-run = "peta"
+authors = ["Gasper <gasper(a)gmx.com>"]
 
 [[bin]]
-name = "peta"
-path = "peta.rs"
+name = "five"
+path = "five.rs"
 test = true

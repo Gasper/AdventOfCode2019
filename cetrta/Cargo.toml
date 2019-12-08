@@ -1,10 +1,9 @@
 [package]
-name = "cetrta"
+name = "four"
 version = "1.0.0"
-authors = ["Gasper <gasper@gmx.com>"]
-default-run = "cetrta"
+authors = ["Gasper <gasper(a)gmx.com>"]
 
 [[bin]]
-name = "cetrta"
-path = "cetrta.rs"
+name = "four"
+path = "four.rs"
 test = true

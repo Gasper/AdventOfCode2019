@@ -1,16 +1,12 @@
 [package]
-name = "tretja"
+name = "three"
 version = "1.0.0"
-authors = ["Gasper <gasper@gmx.com>"]
-default-run = "tretja"
+authors = ["Gasper <gasper(a)gmx.com>"]
 
 [[bin]]
-name = "tretja"
-path = "tretja.rs"
+name = "three"
+path = "three.rs"
 test = true
 
 [dependencies]
-itertools = "0.8.2"
-
-[build-dependencies]
 itertools = "0.8.2"
