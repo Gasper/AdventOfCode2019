@@ -1,0 +1,12 @@
+[package]
+name = "ten"
+version = "1.0.0"
+authors = ["Gasper <gasper(a)gmx.com>"]
+
+[[bin]]
+name = "ten"
+path = "ten.rs"
+test = true
+
+[dependencies]
+itertools = "0.8.2"
