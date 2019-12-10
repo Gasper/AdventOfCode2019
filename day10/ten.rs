@@ -28,7 +28,14 @@ fn main() {
     }
 
     println!("Max visible asteroids: {}", max_visible);
-    println!("From coordinates: {:?}", max_asteroid)
+    println!("From coordinates: {:?}", max_asteroid);
+
+    // Part 2
+    let visible_from_station = visible_asteroids(max_asteroid, positions);
+    let bet_direction = find_bet_direction(&visible_from_station);
+    let bet_asteroid = closest_in_direction(positions, max_asteroid, bet_direction);
+    println!("Bet direction: {:?}", bet_direction);
+    println!("Bet on asteroid: {:?}", bet_asteroid);
 }
 
 fn asteroid_positions(asteorid_field: Vec<String>) -> Vec<(i64, i64)> {
@@ -73,11 +80,61 @@ fn directions_eq(first: (f64, f64), second: (f64, f64)) -> bool {
            (first.1 - second.1).abs() < 1e-12;
 }
 
+// Part 2
+fn find_bet_direction(direction_vectors: &Vec<(f64, f64)>) -> (f64, f64) {
+    let mut clockwise_directions = (*direction_vectors).clone();
+    clockwise_directions.sort_by(|a, b| {
+        
+        let mut angle1 = a.1.atan2(-a.0).to_degrees();
+        if angle1 < 0.0 {
+            angle1 = 360.0 + angle1;
+        }
+
+        let mut angle2 = b.1.atan2(-b.0).to_degrees();
+        if angle2 < 0.0 {
+            angle2 = 360.0 + angle2;
+        }
+        
+        return angle1.partial_cmp(&angle2).unwrap();
+    });
+
+    return clockwise_directions[199];
+}
+
+fn distance_between(asteorid1: (i64, i64), asteorid2: (i64, i64)) -> f64 {
+    return (((asteorid2.0 - asteorid1.0) as f64).powi(2) + 
+            ((asteorid2.1 - asteorid1.1) as f64).powi(2)).sqrt();
+}
+
+fn closest_in_direction(positions: &Vec<(i64, i64)>, laser: (i64, i64), direction: (f64, f64)) -> (i64, i64) {
+    let right_direction: Vec<(i64, i64)> = positions.clone().into_iter().filter(|p| {
+        let asteorid_direction = direction_to_asteroid(laser, *p);
+        return directions_eq(asteorid_direction, direction);
+    }).collect();
+
+    let mut closest_dist = f64::INFINITY;
+    let mut closest_asteroid = (0i64, 0i64);
+    for asteroid in right_direction {
+        if distance_between(laser, asteroid) < closest_dist {
+            closest_dist = distance_between(laser, asteroid);
+            closest_asteroid = asteroid.clone();
+        }
+    }
+
+    return closest_asteroid;
+}
 
 #[cfg(test)]
 mod test {
 
     use super::*;
+
+    #[test]
+    #[ignore]
+    fn test_bet_direction() {
+        let directions = vec![(-1.0, 0.0), (-1.0, -1.0), (0.0, -1.0), (1.0, -1.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0), (-1.0, 1.0), ];
+        assert_eq!(find_bet_direction(&directions), (-1.0, 0.0));
+    }
 
     #[test]
     fn test_asteroid_positions() {
@@ -107,16 +164,16 @@ mod test {
         let positions = vec![(0, 1), (0, 4), (2, 0), (2, 1), (2, 2), 
             (2, 3), (2, 4), (3, 4), (4, 3), (4, 4)];  
         
-        assert_eq!(visible_asteroids((0, 1), &positions), 7);
-        assert_eq!(visible_asteroids((0, 4), &positions), 7);
-        assert_eq!(visible_asteroids((2, 0), &positions), 6);
-        assert_eq!(visible_asteroids((2, 1), &positions), 7);
-        assert_eq!(visible_asteroids((2, 2), &positions), 7);
-        assert_eq!(visible_asteroids((2, 3), &positions), 7);
-        assert_eq!(visible_asteroids((2, 4), &positions), 5);
-        assert_eq!(visible_asteroids((3, 4), &positions), 7);
-        assert_eq!(visible_asteroids((4, 3), &positions), 8);
-        assert_eq!(visible_asteroids((4, 4), &positions), 7);
+        assert_eq!(visible_asteroids((0, 1), &positions).len(), 7);
+        assert_eq!(visible_asteroids((0, 4), &positions).len(), 7);
+        assert_eq!(visible_asteroids((2, 0), &positions).len(), 6);
+        assert_eq!(visible_asteroids((2, 1), &positions).len(), 7);
+        assert_eq!(visible_asteroids((2, 2), &positions).len(), 7);
+        assert_eq!(visible_asteroids((2, 3), &positions).len(), 7);
+        assert_eq!(visible_asteroids((2, 4), &positions).len(), 5);
+        assert_eq!(visible_asteroids((3, 4), &positions).len(), 7);
+        assert_eq!(visible_asteroids((4, 3), &positions).len(), 8);
+        assert_eq!(visible_asteroids((4, 4), &positions).len(), 7);
     }
 
     #[test]
@@ -139,8 +196,8 @@ mod test {
 
         for position in positions.into_iter() {
             let visible_current = visible_asteroids(*position, positions);
-            if visible_current > max_visible {
-                max_visible = visible_current;
+            if visible_current.len() > max_visible {
+                max_visible = visible_current.len();
                 max_asteroid = *position;
             }
         }
@@ -170,8 +227,8 @@ mod test {
 
         for position in positions.into_iter() {
             let visible_current = visible_asteroids(*position, positions);
-            if visible_current > max_visible {
-                max_visible = visible_current;
+            if visible_current.len() > max_visible {
+                max_visible = visible_current.len();
                 max_asteroid = *position;
             }
         }
@@ -211,8 +268,8 @@ mod test {
 
         for position in positions.into_iter() {
             let visible_current = visible_asteroids(*position, positions);
-            if visible_current > max_visible {
-                max_visible = visible_current;
+            if visible_current.len() > max_visible {
+                max_visible = visible_current.len();
                 max_asteroid = *position;
             }
         }
