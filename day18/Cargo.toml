@@ -1,0 +1,12 @@
+[package]
+name = "eighteen"
+version = "1.0.0"
+authors = ["Gasper <gasper(a)gmx.com>"]
+
+[[bin]]
+name = "eighteen"
+path = "eighteen.rs"
+test = true
+
+[dependencies]
+pathfinding = "2.0.1"
