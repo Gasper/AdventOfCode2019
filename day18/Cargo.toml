@@ -10,3 +10,4 @@ test = true
 
 [dependencies]
 pathfinding = "2.0.1"
+itertools = "0.8.2"
