@@ -26,8 +26,9 @@ fn main() {
     println!("End: {:?}", end);
     println!("Portals: {:?}", portals);
 
-    let shortest_path = bfs(&start, 
-        |p| successors(&map, &portals, *p), |p| *p == end).unwrap();
+    let shortest_path = bfs(&add_level(start, 0), 
+        |p| successors(&map, &portals, *p), 
+        |p| *p == add_level(end, 0)).unwrap();
 
     println!("Shortest path: {:?}", shortest_path);
     println!("Shortest path for AA to ZZ is {} steps long", shortest_path.len() - 1);
@@ -95,30 +96,49 @@ fn locate_portals(map: &Vec<Vec<char>>) -> (HashMap<(usize, usize), (usize, usiz
     return (portal_mappings, start.unwrap(), end.unwrap());
 }
 
-fn successors(map: &Vec<Vec<char>>, portals: &HashMap<(usize, usize), (usize, usize)>, position: (usize, usize)) -> Vec<(usize, usize)> {
+fn successors(map: &Vec<Vec<char>>, portals: &HashMap<(usize, usize), (usize, usize)>, position: (usize, usize, usize)) 
+-> Vec<(usize, usize, usize)> {
         
     fn reachable(tile: char) -> bool {
         return tile == TILE;
     }
     
     let mut successors = Vec::new();
-    let (x, y) = position;
+    let (x, y, level) = position;
     if reachable(map[y-1][x]) {
-        successors.push((x, y-1));
+        successors.push((x, y-1, level));
     }
     if reachable(map[y+1][x]) {
-        successors.push((x, y+1));
+        successors.push((x, y+1, level));
     }
     if reachable(map[y][x-1]) {
-        successors.push((x-1, y));
+        successors.push((x-1, y, level));
     }
     if reachable(map[y][x+1]) {
-        successors.push((x+1, y));
+        successors.push((x+1, y, level));
     }
 
     if let Some(portal_destination) = portals.get(&(x, y)) {
-        successors.push(*portal_destination);
+
+        if is_inner((x, y)) {
+            successors.push(add_level(*portal_destination, level + 1));
+        }
+        else {
+            if level > 0 {
+                successors.push(add_level(*portal_destination, level - 1));
+            }
+        }
     }
 
     return successors;
+}
+
+fn is_inner(position: (usize, usize)) -> bool {
+    let (x, y) = position;
+    return x > 20 && x < 120 && y > 20 && y < 120;
+}
+
+fn add_level(position: (usize, usize), level: usize) -> (usize, usize, usize) {
+    let (x, y) = position;
+    return (x, y, level);
 }
