@@ -30,7 +30,7 @@ fn main() {
     let mut input = vec![];
     let mut last_output = 0;
 
-    let complete_input = vec!["NOT T T", "AND A T", "AND B T", "AND C T", "NOT T J", "AND D J", "WALK\n"];
+    let complete_input = vec!["NOT T T", "AND A T", "AND B T", "AND C T", "NOT T J", "AND D J", "OR H T", "OR E T", "AND T J", "RUN\n"];
     let complete_input: Vec<String> = complete_input.into_iter().map(|s| String::from(s)).collect();
     let mut input_iter: Vec<i64> = complete_input.join("\n").chars().into_iter().map(|c| c as i64).rev().collect();
 
