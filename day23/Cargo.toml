@@ -1,0 +1,9 @@
+[package]
+name = "twentythree"
+version = "1.0.0"
+authors = ["Gasper <gasper(a)gmx.com>"]
+
+[[bin]]
+name = "twentythree"
+path = "twentythree.rs"
+test = true
