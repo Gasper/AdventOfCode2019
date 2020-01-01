@@ -1,0 +1,12 @@
+[package]
+name = "twentyfive"
+version = "1.0.0"
+authors = ["Gasper <gasper(a)gmx.com>"]
+
+[[bin]]
+name = "twentyfive"
+path = "twentyfive.rs"
+test = true
+
+[dependencies]
+text_io = "0.1.7"
