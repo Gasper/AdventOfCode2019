@@ -10,3 +10,5 @@ test = true
 
 [dependencies]
 itertools = "0.8.2"
+num-bigint = "0.2.4"
+num-traits = "0.2.10"
